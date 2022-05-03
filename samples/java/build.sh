@@ -29,7 +29,7 @@ AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query ["Account"])
 echo "Using region: ${AWS_REGION} account: ${AWS_ACCOUNT_ID}"
 
 read -a SERVICE_NAMES << EOF
-$(aws ssm get-parameters-by-path --path /saas-boost/macrotest1/app/ --recursive --query "Parameters[?contains(Name, 'SERVICE_JSON')].Name" | grep SERVICE_JSON | cut -d\" -f2 | rev | cut -d/ -f2 | rev | tr '\n' ' ')
+$(aws ssm get-parameters-by-path --path /saas-boost/${SAAS_BOOST_ENV}/app/ --recursive --query "Parameters[?contains(Name, 'SERVICE_JSON')].Name" | grep SERVICE_JSON | cut -d\" -f2 | rev | cut -d/ -f2 | rev | tr '\n' ' ')
 EOF
 i=0
 echo "${SAAS_BOOST_ENV} contains ${#SERVICE_NAMES[@]} services:"
