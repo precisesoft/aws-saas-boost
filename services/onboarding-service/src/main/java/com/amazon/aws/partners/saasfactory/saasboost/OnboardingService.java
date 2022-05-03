@@ -759,8 +759,16 @@ public class OnboardingService {
                         ecsSecurityGroup = tenantResources.get("ECS_SECURITY_GROUP").get("name");
                         loadBalancerArn = tenantResources.get("LOAD_BALANCER").get("arn");
                         // Depending on the SSL certificate configuration, one of these 2 listeners must exist
-                        httpListenerArn = Objects.toString(tenantResources.get("HTTP_LISTENER").get("arn"), "");
-                        httpsListenerArn = Objects.toString(tenantResources.get("HTTPS_LISTENER").get("arn"), "");
+                        if (tenantResources.containsKey("HTTP_LISTENER")) {
+                            httpListenerArn = Objects.toString(tenantResources.get("HTTP_LISTENER").get("arn"), "");
+                        } else {
+                            httpListenerArn = "";
+                        }
+                        if (tenantResources.containsKey("HTTPS_LISTENER")) {
+                            httpsListenerArn = Objects.toString(tenantResources.get("HTTPS_LISTENER").get("arn"), "");
+                        } else {
+                            httpsListenerArn = "";
+                        }
                         if (Utils.isBlank(vpc) || Utils.isBlank(privateSubnetA) || Utils.isBlank(privateSubnetB)
                                 || Utils.isBlank(ecsCluster) || Utils.isBlank(ecsSecurityGroup)
                                 || Utils.isBlank(loadBalancerArn)
