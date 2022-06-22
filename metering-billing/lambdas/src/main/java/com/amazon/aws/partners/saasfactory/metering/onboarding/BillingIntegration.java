@@ -232,7 +232,7 @@ public class BillingIntegration implements RequestHandler<EventBridgeEvent, Obje
         LOGGER.info("setupTenantBillingListener: Start Tenant Setup in Billing System");
         try {
             Map<String, Object> detail = (Map<String, Object>) event.get("detail");
-            provisionTenantInStripe((String) detail.get("tenantId"), (String) detail.get("planId"));
+            provisionTenantInStripe((String) detail.get("tenantId"), (String) detail.get("planId"), (String) detail.get("token"));
             LOGGER.info("setupTenantBillingListener: Completed Tenant Setup in Billing System");
         } catch (StripeException e) {
             LOGGER.error("setupTenantBillingListener: Error setting up Tenant in Stripe.");
@@ -258,7 +258,7 @@ public class BillingIntegration implements RequestHandler<EventBridgeEvent, Obje
         return null;
     }
 
-    private void provisionTenantInStripe(String tenantId, String planId) throws StripeException {
+    private void provisionTenantInStripe(String tenantId, String planId, String token) throws StripeException {
         LOGGER.info("provisionTenantInStripe: Starting...");
 
         Stripe.apiKey = getStripeAPIKey();
@@ -293,12 +293,13 @@ public class BillingIntegration implements RequestHandler<EventBridgeEvent, Obje
                 CustomerCreateParams params =
                         CustomerCreateParams.builder()
                                 .setName(customerName)
+                                .setSource(token)
                                 //.setEmail("bogus@example.com")
-                                .setPaymentMethod("pm_card_visa")
-                                .setInvoiceSettings(
-                                        CustomerCreateParams.InvoiceSettings.builder()
-                                                .setDefaultPaymentMethod("pm_card_visa")
-                                                .build())
+                                //.setPaymentMethod("pm_card_visa")
+                                // .setInvoiceSettings(
+                                //         CustomerCreateParams.InvoiceSettings.builder()
+                                //                 .setDefaultPaymentMethod("pm_card_visa")
+                                //                 .build())
                                 .setDescription(customerName + " from AWS SaaS Boost")
                                 .build();
                 customer = Customer.create(params);
